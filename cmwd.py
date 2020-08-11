@@ -51,7 +51,7 @@ def send_message(my_chat_id: str, ret_code: str, script_path: str):
         + "&parse_mode=Markdown&text="
         + bot_message
         + "\n\nScript path: "
-        + script_path
+        + script_path.replace("_", "\\_")
         + "\n\nExit code: "
         + ret_code
     )
@@ -89,4 +89,4 @@ if __name__ == "__main__":
 
     if not response["ok"]:
         print("\nAn error occurred while sending the Telegram message:")
-        print(response["result"])
+        print(response)
