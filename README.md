@@ -6,9 +6,12 @@ If you don't have a secret bot token already, follow [this Telegram official gui
 
 Open the `cmwd.py` script and set up your bot name and secret key in the `bot_name` and `secret_token` variables, respectively.
 
+You also need to configure your telegram username in the `my_telegram_username` variable.
+
 ```python
 bot_name = "my_bot"
 secret_token = "1234abcde0987abdkfhh038ufsd"
+my_telegram_username = "my_username"
 ```
 
 Then you're done!
