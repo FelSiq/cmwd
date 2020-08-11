@@ -4,8 +4,10 @@ import requests
 import os
 import datetime
 
+# Configure these variables:
 bot_name = ""
 secret_token = ""
+
 
 python_alias = sys.executable
 bot_url = "https://api.telegram.org/bot" + secret_token + "/"
@@ -81,21 +83,21 @@ def execute_script(script_path: str):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print(f"usage: {python_alias}", sys.argv[0], "<script>")
+        print(f"usage: {python_alias}", sys.argv[0], "<python script path>")
         exit(1)
 
     if not bot_name:
         raise ValueError(
-            "Bot bot name not configured!\n"
-            "Ask Telegram's BotFather for your bot secret token: "
+            "Bot name is not configured!\n"
+            "Ask Telegram's BotFather for your bot name at "
             "https://t.me/botfather and then modify the "
             "'bot_name' variable."
         )
 
     if not secret_token:
         raise ValueError(
-            "Bot secret token not configured!\n"
-            "Ask Telegram's BotFather for your bot secret token: "
+            "Bot secret token is not configured!\n"
+            "Ask Telegram's BotFather for your bot secret token at "
             "https://t.me/botfather and then modify the "
             "'secret_token' variable."
         )
