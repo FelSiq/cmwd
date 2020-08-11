@@ -2,6 +2,7 @@
 import sys
 import requests
 import os
+import datetime
 
 bot_name = ""
 secret_token = ""
@@ -9,6 +10,7 @@ secret_token = ""
 python_alias = sys.executable
 bot_url = "https://api.telegram.org/bot" + secret_token + "/"
 bot_message = "Your script finished running."
+datetime_format = "%d/%m/%Y %H:%M:%S"
 
 
 def get_chat_id() -> str:
@@ -42,7 +44,14 @@ def get_chat_id() -> str:
     return my_chat_id
 
 
-def send_message(my_chat_id: str, ret_code: str, script_path: str):
+def send_message(
+    my_chat_id: str,
+    ret_code: str,
+    script_path: str,
+    time_start: str,
+    time_end: str,
+    time_delta: str,
+):
     """Send message to Telegram when script finishes."""
     request_url = (
         bot_url
@@ -52,6 +61,12 @@ def send_message(my_chat_id: str, ret_code: str, script_path: str):
         + bot_message
         + "\n\nScript path: "
         + script_path.replace("_", "\\_")
+        + "\n\nStart time: "
+        + time_start
+        + "\nFinish time: "
+        + time_end
+        + "\nTotal time elapsed: "
+        + time_delta
         + "\n\nExit code: "
         + ret_code
     )
@@ -70,22 +85,39 @@ if __name__ == "__main__":
         exit(1)
 
     if not bot_name:
-        raise ValueError("Bot bot name not configured!\n"
-                         "Ask Telegram's BotFather for your bot secret token: "
-                         "https://t.me/botfather and then modify the "
-                         "'bot_name' variable.")
-    
+        raise ValueError(
+            "Bot bot name not configured!\n"
+            "Ask Telegram's BotFather for your bot secret token: "
+            "https://t.me/botfather and then modify the "
+            "'bot_name' variable."
+        )
+
     if not secret_token:
-        raise ValueError("Bot secret token not configured!\n"
-                         "Ask Telegram's BotFather for your bot secret token: "
-                         "https://t.me/botfather and then modify the "
-                         "'secret_token' variable.")
+        raise ValueError(
+            "Bot secret token not configured!\n"
+            "Ask Telegram's BotFather for your bot secret token: "
+            "https://t.me/botfather and then modify the "
+            "'secret_token' variable."
+        )
 
     script_path = sys.argv[1]
 
     my_chat_id = get_chat_id()
+
+    time_start = datetime.datetime.now()
     ret_code = execute_script(script_path)
-    response = send_message(my_chat_id, str(ret_code), script_path)
+    time_end = datetime.datetime.now()
+
+    time_delta = time_end - time_start
+
+    response = send_message(
+        my_chat_id,
+        str(ret_code),
+        script_path,
+        time_start.strftime(datetime_format),
+        time_end.strftime(datetime_format),
+        str(time_delta).split(".")[0],
+    )
 
     if not response["ok"]:
         print("\nAn error occurred while sending the Telegram message:")
