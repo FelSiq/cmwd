@@ -21,3 +21,6 @@ Run `cmwd.py` script with your Python interpreter passing your main script as th
 ```bash
 python cmwd.py <script> [args...]
 ```
+
+## Thanks to
+[@BrunoxD](https://github.com/BrunoxD) which helped me debugging out this script.
