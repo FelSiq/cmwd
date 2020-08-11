@@ -4,11 +4,30 @@ import requests
 import os
 import datetime
 
+# --------------------------
 # Configure these variables:
+# --------------------------
+
+# hint: don't put '@' at the start of the bot's name.
 bot_name = ""
-secret_token = ""
+
+# hint: If you don't have your bot secret key, or didn't created your bot
+# already, ask Telegram's @BotFather (here: https://t.me/botfather) for
+# your secret token.
+secret_token = ""  
+
+# hit: usernames in Telegram are case-insensitive. Also, don't put '@' in
+# front of your username.
+my_telegram_username = ""
+
+# --------------------------
+# Now you're good to go!
+# Run this script passing your main Python script as argument!
+# You can also pass any number of extra arguments to your main script.
+# --------------------------
 
 
+my_telegram_username = my_telegram_username.lower()
 python_alias = sys.executable
 bot_url = "https://api.telegram.org/bot" + secret_token + "/"
 bot_message = "Your script finished running."
@@ -29,13 +48,25 @@ def get_chat_id() -> str:
     response = requests.get(request_url)
 
     try:
-        my_chat_id = str(response.json()["result"][0]["message"]["chat"]["id"])
+        # Search for the correct chat id, matching the configured Telegram username
+        for msg in response.json()["result"]:
+            username = msg["message"]["from"]["username"].lower()
+            if username == my_telegram_username:
+                my_chat_id = str(msg["message"]["chat"]["id"])
+                break
 
     except KeyError:
         print(
-            "You did not started a conversation with the bot. "
+            "You did not started a conversation with your bot. "
             f"Send a '/start' message to it in https://t.me/{bot_name}."
         )
+
+        return None
+
+    if my_chat_id is None:
+        print("Unable to find your chat id. Did you configured your Telegram username "
+              f"correctly ('{my_telegram_username}', is that you?) and have send a /start "
+              "message to your bot already?")
 
         return None
 
@@ -105,6 +136,9 @@ if __name__ == "__main__":
     script_path = sys.argv[1]
 
     my_chat_id = get_chat_id()
+
+    if my_chat_id is None:
+        exit(1)
 
     time_start = datetime.datetime.now()
     ret_code = execute_script(script_path)
